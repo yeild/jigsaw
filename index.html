@@ -100,24 +100,27 @@
     ctx.fill()
   }
   var icon = document.getElementById('icon')
-  var isMouseDown = false
+  var container = document.getElementsByClassName('container')[0]
+  var originX, originY
   icon.addEventListener('mousedown', function (e) {
-    isMouseDown = true
-    var x = e.x, y = e.y
-    console.log(x)
-    console.log(y)
-    icon.addEventListener('mousemove', function (e) {
-      if (!isMouseDown) return false
-      document.getElementById('bar-text').setAttribute('hidden', 'hidden')
-      var moveX = e.x - x
-      var moveY= e.y - y
-      block.style.left = moveX + 'px'
-      icon.style.left = moveX + 'px'
-    })
+    //originX = container.offsetLeft, originY =  container.offsetTop
+    originX = e.x, originY =  e.y
+    icon.addEventListener('mousemove', drag)
   })
   document.addEventListener('mouseup', function () {
-    isMouseDown = false
+    block.style.left = 0
+    icon.style.left = 0
+    icon.removeEventListener('mousemove', drag)
   })
+  function drag(e) {
+    var moveX = e.x - originX
+    var moveY= e.y - originY
+    if (moveX < 0 || moveX + 38>=310) return false
+    icon.style.left = moveX + 'px'
+    var blockLeft = (310 - 40 - 20) / (310 - 40) * moveX
+    block.style.left = blockLeft + 'px'
+    document.getElementById('bar-text').setAttribute('hidden', 'hidden')
+  }
 </script>
 </body>
 </html>
