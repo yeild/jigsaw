@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Title</title>
+  <style>
+    body {
+      width: 500px;
+      margin: 100px auto;
+    }
+    .container {
+      position: relative;
+    }
+    #block {
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    .bar{
+      position: relative;
+      text-align: center;
+      width: 310px;
+      height: 40px;
+      line-height: 40px;
+      margin-top: 15px;
+      background: #f7f9fa;
+      color: #45494c;
+      border: 1px solid #e4e7eb;
+    }
+    .icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 40px;
+      height: 40px;
+      background: #fff;
+      box-shadow: 0 0 3px rgba(0,0,0,.3);
+      cursor: pointer;
+      transition: background .2s linear;
+    }
+    .icon:hover {
+      background: #1991FA;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <canvas width="310" height="155" id="canvas"></canvas>
+  <canvas id="block"></canvas>
+  <div class="bar">
+    <div class="icon" id="icon">→</div>
+    <span class="bar-text" id="bar-text">向右滑动滑块填充拼图</span>
+  </div>
+</div>
+<script>
+  var canvas = document.getElementById('canvas')
+  var temp = canvas.cloneNode(true) // canvas用来做背景，clone一个temp用来生成滑块
+  var block = document.getElementById('block')
+  var blockCtx = block.getContext('2d')
+  var canvas_ctx = canvas.getContext('2d')
+  var temp_ctx = temp.getContext('2d')
+  var img = document.createElement('img')
+  img.onload = function() {
+    canvas_ctx.drawImage(img, 0, 0, 310, 155)
+    temp_ctx.drawImage(img, 0, 0, 310, 155)
+    block.width = w+r*2
+    block.height = 155
+
+    var ImageData = temp_ctx.getImageData(x, y-r*2+2, w+r*2, w+r*2)
+    blockCtx.putImageData(ImageData, 0, y-r*2+2)
+
+  }
+  img.src = 'img.jpg'
+
+  var x = 150, y = 40, w = 42, r = 10, PI = Math.PI
+  draw(canvas_ctx, 'fill')
+  draw(temp_ctx, 'clip')
+  /**
+   * @param ctx: canvas context
+   * @param operation: fill or clip
+   */
+  function draw(ctx, operation) {
+    ctx.beginPath()
+    ctx.moveTo(x,y)
+    ctx.lineTo(x+w/2,y)
+    ctx.arc(x+w/2,y-r+2, r,0,2*PI)
+    ctx.lineTo(x+w/2,y)
+    ctx.lineTo(x+w,y)
+    ctx.lineTo(x+w,y+w/2)
+    ctx.arc(x+w+r-2,y+w/2,r,0,2*PI)
+    ctx.lineTo(x+w,y+w/2)
+    ctx.lineTo(x+w,y+w)
+    ctx.lineTo(x,y+w)
+    ctx.lineTo(x,y)
+    ctx[operation]()
+    ctx.beginPath()
+    ctx.arc(x,y+w/2, r,1.5*PI,0.5*PI)
+    ctx.globalCompositeOperation = "xor"
+    ctx.fill()
+  }
+  var icon = document.getElementById('icon')
+  var isMouseDown = false
+  icon.addEventListener('mousedown', function (e) {
+    isMouseDown = true
+    var x = e.x, y = e.y
+    console.log(x)
+    console.log(y)
+    icon.addEventListener('mousemove', function (e) {
+      if (!isMouseDown) return false
+      document.getElementById('bar-text').setAttribute('hidden', 'hidden')
+      var moveX = e.x - x
+      var moveY= e.y - y
+      block.style.left = moveX + 'px'
+      icon.style.left = moveX + 'px'
+    })
+  })
+  document.addEventListener('mouseup', function () {
+    isMouseDown = false
+  })
+</script>
+</body>
+</html>
