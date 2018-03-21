@@ -72,8 +72,10 @@
 
   }
   img.src = 'img.jpg'
-
   var x = 150, y = 40, w = 42, r = 10, PI = Math.PI
+
+  var icon = document.getElementById('icon')
+  reset()
   draw(canvas_ctx, 'fill')
   draw(temp_ctx, 'clip')
   /**
@@ -99,18 +101,24 @@
     ctx.globalCompositeOperation = "xor"
     ctx.fill()
   }
-  var icon = document.getElementById('icon')
   var container = document.getElementsByClassName('container')[0]
   var originX, originY
   icon.addEventListener('mousedown', function (e) {
-    //originX = container.offsetLeft, originY =  container.offsetTop
     originX = e.x, originY =  e.y
-    icon.addEventListener('mousemove', drag)
+    document.addEventListener('mousemove', drag)
   })
   document.addEventListener('mouseup', function () {
-    block.style.left = 0
-    icon.style.left = 0
-    icon.removeEventListener('mousemove', drag)
+    var left = parseInt(block.style.left)
+    if (Math.abs(left - x) < 10) {
+      icon.innerHTML = '√'
+    } else {
+      icon.innerHTML = '×'
+      setTimeout(function () {
+        reset()
+        icon.innerHTML = '→'
+      }, 1000)
+    }
+    document.removeEventListener('mousemove', drag)
   })
   function drag(e) {
     var moveX = e.x - originX
@@ -120,6 +128,12 @@
     var blockLeft = (310 - 40 - 20) / (310 - 40) * moveX
     block.style.left = blockLeft + 'px'
     document.getElementById('bar-text').setAttribute('hidden', 'hidden')
+  }
+  function reset() {
+    block.style.left = 0
+    icon.style.left = 0
+    x = Math.random() * 200 + 100
+    y = Math.random() * 60 + 55
   }
 </script>
 </body>
