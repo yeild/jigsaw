@@ -10,9 +10,6 @@
     return Math.round(Math.random() * (end - start) + start)
   }
 
-  function setAttribute(target) {
-  }
-
   function createCanvas(width, height) {
     const canvas = document.createElement('canvas')
     canvas.width = width
@@ -30,6 +27,7 @@
   function getRandomImg() {
     return 'img.jpg'
   }
+
   function setStyle(el, style) {
     Object.assign(el.style, style)
   }
@@ -61,6 +59,7 @@
       this.initImg()
       this.draw()
       this.renderStyle()
+      this.bindEvents()
     }
 
     initDOM(el) {
@@ -114,19 +113,70 @@
     }
 
     renderStyle() {
-      this.el.style.position = 'relative'
       setStyle(this.block, {
         position: 'absolute',
         left: 0,
         top: 0
       })
-      Object.assign(this.block.style, {
+      setStyle(this.barContainer, {
+        position: 'relative',
+        textAlign: 'center',
+        width: '310px',
+        height: '40px',
+        lineHeight: '40px',
+        marginTop: '15px',
+        background: '#f7f9fa',
+        color: '#45494c',
+        border: '1px solid #e4e7eb'
+      })
+      setStyle(this.slider, {
         position: 'absolute',
+        top: 0,
         left: 0,
-        top: 0
+        width: '40px',
+        height: '40px',
+        background: '#fff',
+        boxShadow: '0 0 3px rgba(0,0,0,.3)',
+        cursor: 'pointer',
+        transition: 'background .2s linear'
       })
     }
+
+    bindEvents() {
+      this.el.onselectstart = () => false
+
+      var originX, originY
+
+      this.slider.addEventListener('mousedown', function (e) {
+        originX = e.x, originY = e.y
+        document.addEventListener('mousemove', drag)
+      })
+      document.addEventListener('mouseup', () => {
+        var left = parseInt(this.block.style.left)
+        if (Math.abs(left - this.x) < 10) {
+          this.slider.innerHTML = '√'
+        } else {
+          this.slider.innerHTML = '×'
+          /*          setTimeout(function () {
+                      reset()
+                      icon.innerHTML = '→'
+                    }, 1000)*/
+        }
+        document.removeEventListener('mousemove', drag)
+
+      })
+      const drag = function (e) {
+        var moveX = e.x - originX
+        var moveY = e.y - originY
+        if (moveX < 0 || moveX + 38 >= 310) return false
+        this.slider.style.left = moveX + 'px'
+        var blockLeft = (310 - 40 - 20) / (310 - 40) * moveX
+        this.block.style.left = blockLeft + 'px'
+        //document.getElementById('bar-text').setAttribute('hidden', 'hidden')
+      }.bind(this)
+    }
   }
+
   window.jigsaw = {
     init: function (el) {
       new jigsaw().init(el)
