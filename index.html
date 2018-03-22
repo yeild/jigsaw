@@ -47,7 +47,7 @@
 <body>
 <div class="container">
   <canvas width="310" height="155" id="canvas"></canvas>
-  <canvas id="block"></canvas>
+  <canvas id="block" width="310" height="155"></canvas>
   <div class="bar">
     <div class="icon" id="icon">→</div>
     <span class="bar-text" id="bar-text">向右滑动滑块填充拼图</span>
@@ -55,19 +55,16 @@
 </div>
 <script>
   var canvas = document.getElementById('canvas')
-  var temp = canvas.cloneNode(true) // canvas用来做背景，clone一个temp用来生成滑块
   var block = document.getElementById('block')
   var blockCtx = block.getContext('2d')
   var canvas_ctx = canvas.getContext('2d')
-  var temp_ctx = temp.getContext('2d')
   var img = document.createElement('img')
   img.onload = function() {
     canvas_ctx.drawImage(img, 0, 0, 310, 155)
-    temp_ctx.drawImage(img, 0, 0, 310, 155)
+    blockCtx.drawImage(img, 0, 0, 310, 155)
+    var ImageData = blockCtx.getImageData(x, y-r*2+2, w+r*2, w+r*2)
     block.width = w+r*2
     block.height = 155
-
-    var ImageData = temp_ctx.getImageData(x, y-r*2+2, w+r*2, w+r*2)
     blockCtx.putImageData(ImageData, 0, y-r*2+2)
 
   }
@@ -77,7 +74,7 @@
   var icon = document.getElementById('icon')
   reset()
   draw(canvas_ctx, 'fill')
-  draw(temp_ctx, 'clip')
+  draw(blockCtx, 'clip')
   /**
    * @param ctx: canvas context
    * @param operation: fill or clip
@@ -132,8 +129,8 @@
   function reset() {
     block.style.left = 0
     icon.style.left = 0
-    x = Math.random() * 200 + 100
-    y = Math.random() * 60 + 55
+    x = Math.round(Math.random() * 170 + 70)
+    y = Math.round(Math.random() * 15 + 70)
   }
 </script>
 </body>
