@@ -103,6 +103,10 @@
   background-size: 34px 471px;
 }
 
+.sliderText {
+  font-size: 14px;
+}
+
 .refreshIcon {
   position: absolute;
   right: 0;
