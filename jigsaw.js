@@ -26,6 +26,11 @@
 
   function getRandomImg() {
     return 'img.jpg'
+    if (Math.random() > 0.5) {
+      return 'img.jpg'
+    } else {
+      return 'i2.jpg'
+    }
   }
 
   function setStyle(el, style) {
@@ -50,6 +55,14 @@
     ctx.arc(x, y + l / 2, r, 1.5 * PI, 0.5 * PI)
     ctx.globalCompositeOperation = "xor"
     ctx.fill()
+  }
+
+  function sum (x, y) {
+    return x + y
+  }
+  
+  function square(x) {
+    return x * x
   }
 
   class jigsaw {
@@ -102,6 +115,7 @@
         this.block.width = L
         this.blockCtx.putImageData(ImageData, 0, y)
       })
+      this.img = img
     }
 
     draw() {
@@ -145,35 +159,64 @@
     bindEvents() {
       this.el.onselectstart = () => false
 
-      var originX, originY
-
+      let originX, originY, trail = []
       this.slider.addEventListener('mousedown', function (e) {
         originX = e.x, originY = e.y
         document.addEventListener('mousemove', drag)
       })
-      document.addEventListener('mouseup', () => {
-        var left = parseInt(this.block.style.left)
-        if (Math.abs(left - this.x) < 10) {
-          this.slider.innerHTML = '√'
-        } else {
-          this.slider.innerHTML = '×'
-          /*          setTimeout(function () {
-                      reset()
-                      icon.innerHTML = '→'
-                    }, 1000)*/
-        }
+      document.addEventListener('mouseup', (e) => {
         document.removeEventListener('mousemove', drag)
-
+        if (e.x == originX) return false
+        this.trail = trail
+        const { spliced, TuringTest } = this.verify()
+        if (spliced) {
+          if (TuringTest) {
+            this.slider.innerHTML = '√'
+            this.success && this.success()
+          } else {
+            this.slider.innerHTML = '?'
+            this.text.innerHTML = '再试一次'
+            this.reset()
+          }
+        } else {
+          this.slider.innerHTML = 'x'
+          this.fail && this.fail()
+          this.reset()
+        }
       })
       const drag = function (e) {
         var moveX = e.x - originX
         var moveY = e.y - originY
-        if (moveX < 0 || moveX + 38 >= 310) return false
+        if (moveX < 0 || moveX + 38 >= w) return false
         this.slider.style.left = moveX + 'px'
-        var blockLeft = (310 - 40 - 20) / (310 - 40) * moveX
+        var blockLeft = (w - 40 - 20) / (w - 40) * moveX
         this.block.style.left = blockLeft + 'px'
-        //document.getElementById('bar-text').setAttribute('hidden', 'hidden')
+        this.text.setAttribute('hidden', 'hidden')
+        trail.push(moveY)
       }.bind(this)
+    }
+
+    verify() {
+      const arr = this.trail // 拖动时y轴的移动距离
+      const average = arr.reduce(sum) / arr.length // 平均值
+      const deviations = arr.map(x => x - average) // 偏差数组
+      const stddev = Math.sqrt(deviations.map(square).reduce(sum) / arr.length) // 标准差
+      const left = parseInt(this.block.style.left)
+      return {
+        spliced:  Math.abs(left - this.x) < 10,
+        TuringTest: average !== stddev, // 只是简单的验证拖动轨迹，相等时一般为0，表示可能非人为操作
+      }
+    }
+
+    reset() {
+      setTimeout(() => {
+        this.slider.innerHTML = '→'
+        this.text.removeAttribute('hidden')
+        this.slider.style.left = 0
+        this.block.style.left = 0
+        this.img.src = 'i2.jpg'
+        this.draw()
+      }, 1000)
     }
   }
 
