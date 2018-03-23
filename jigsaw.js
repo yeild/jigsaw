@@ -11,14 +11,14 @@
   }
 
   function createCanvas(width, height) {
-    const canvas = document.createElement('canvas')
+    const canvas = createElement('canvas')
     canvas.width = width
     canvas.height = height
     return canvas
   }
 
   function createImg(onload) {
-    const img = document.createElement('img')
+    const img = createElement('img')
     img.crossOrigin = "Anonymous"
     img.onload = onload
     img.onerror = () => {
@@ -27,13 +27,21 @@
     img.src = getRandomImg()
     return img
   }
-
-  function getRandomImg() {
-    return 'https://picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
+  
+  function createElement(tagName) {
+    return document.createElement(tagName)
   }
 
-  function setStyle(el, style) {
-    Object.assign(el.style, style)
+  function addClass(tag, className) {
+    tag.classList.add(className)
+  }
+
+  function removeClass(tag, className) {
+    tag.classList.remove(className)
+  }
+  
+  function getRandomImg() {
+    return 'https://picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
   }
 
   function draw(ctx, operation, x, y) {
@@ -76,34 +84,46 @@
       this.initDOM()
       this.initImg()
       this.draw()
-      this.renderStyle()
       this.bindEvents()
     }
 
     initDOM() {
       const canvas = createCanvas(w, h) // 画布
       const block = canvas.cloneNode(true) // 滑块
-      const barContainer = document.createElement('div')
-      const barMask = document.createElement('div')
-      const slider = document.createElement('div')
-      slider.innerHTML = '→'
-      const text = document.createElement('span')
+      const sliderContainer = createElement('div')
+      const refreshIcon = createElement('div')
+      const sliderMask = createElement('div')
+      const slider = createElement('div')
+      const sliderIcon = createElement('span')
+      const text = createElement('span')
+
+      block.className = 'block'
+      sliderContainer.className = 'sliderContainer'
+      refreshIcon.className = 'refreshIcon'
+      sliderMask.className = 'sliderMask'
+      slider.className = 'slider'
+      sliderIcon.className = 'sliderIcon'
       text.innerHTML = '向右滑动滑块填充拼图'
+      text.className = 'sliderText'
 
       const el = this.el
       el.appendChild(canvas)
+      el.appendChild(refreshIcon)
       el.appendChild(block)
-      barMask.appendChild(slider)
-      barContainer.appendChild(barMask)
-      barContainer.appendChild(text)
-      el.appendChild(barContainer)
+      slider.appendChild(sliderIcon)
+      sliderMask.appendChild(slider)
+      sliderContainer.appendChild(sliderMask)
+      sliderContainer.appendChild(text)
+      el.appendChild(sliderContainer)
 
       Object.assign(this, {
         canvas,
         block,
-        barContainer,
-        barMask,
+        sliderContainer,
+        refreshIcon,
         slider,
+        sliderMask,
+        sliderIcon,
         text,
         canvasCtx: canvas.getContext('2d'),
         blockCtx: block.getContext('2d')
@@ -112,7 +132,7 @@
     }
 
     initImg() {
-      const img = createImg((e) => {
+      const img = createImg(() => {
         this.canvasCtx.drawImage(img, 0, 0, w, h)
         this.blockCtx.drawImage(img, 0, 0, w, h)
         const y = this.y - r * 2 + 2
@@ -137,38 +157,11 @@
       this.block.width = w
     }
 
-    renderStyle() {
-      setStyle(this.block, {
-        position: 'absolute',
-        left: 0,
-        top: 0
-      })
-      setStyle(this.barContainer, {
-        position: 'relative',
-        textAlign: 'center',
-        width: '310px',
-        height: '40px',
-        lineHeight: '40px',
-        marginTop: '15px',
-        background: '#f7f9fa',
-        color: '#45494c',
-        border: '1px solid #e4e7eb'
-      })
-      setStyle(this.slider, {
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        width: '40px',
-        height: '40px',
-        background: '#fff',
-        boxShadow: '0 0 3px rgba(0,0,0,.3)',
-        cursor: 'pointer',
-        transition: 'background .2s linear'
-      })
-    }
-
     bindEvents() {
       this.el.onselectstart = () => false
+      this.refreshIcon.onclick = () => {
+        this.reset()
+      }
 
       let originX, originY, trail = [], isMouseDown = false
       this.slider.addEventListener('mousedown', function (e) {
@@ -183,32 +176,38 @@
         this.slider.style.left = moveX + 'px'
         var blockLeft = (w - 40 - 20) / (w - 40) * moveX
         this.block.style.left = blockLeft + 'px'
-        this.text.setAttribute('hidden', 'hidden')
+
+        addClass(this.sliderContainer, 'sliderContainer_active')
+        this.sliderMask.style.width = moveX + 'px'
         trail.push(moveY)
       })
       document.addEventListener('mouseup', (e) => {
         if (!isMouseDown) return false
         isMouseDown = false
         if (e.x == originX) return false
-
+        removeClass(this.sliderContainer, 'sliderContainer_active')
         this.trail = trail
         const {spliced, TuringTest} = this.verify()
         if (spliced) {
           if (TuringTest) {
-            this.slider.innerHTML = '√'
+            addClass(this.sliderContainer, 'sliderContainer_success')
             this.success && this.success()
           } else {
-            this.slider.innerHTML = '?'
+            addClass(this.sliderContainer, 'sliderContainer_fail')
             this.text.innerHTML = '再试一次'
             this.reset()
           }
         } else {
-          this.slider.innerHTML = 'x'
+          addClass(this.sliderContainer, 'sliderContainer_fail')
           this.fail && this.fail()
-          this.reset()
+          setTimeout(() => {
+            this.reset()
+          }, 1000)
         }
       })
     }
+
+
 
     verify() {
       const arr = this.trail // 拖动时y轴的移动距离
@@ -223,15 +222,13 @@
     }
 
     reset() {
-      setTimeout(() => {
-        this.slider.innerHTML = '→'
-        this.text.removeAttribute('hidden')
-        this.slider.style.left = 0
-        this.block.style.left = 0
-        this.clean()
-        this.img.src = getRandomImg()
-        this.draw()
-      }, 1000)
+      this.sliderContainer.className = 'sliderContainer'
+      this.slider.style.left = 0
+      this.block.style.left = 0
+      this.sliderMask.style.width = 0
+      this.clean()
+      this.img.src = getRandomImg()
+      this.draw()
     }
 
   }

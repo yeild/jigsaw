@@ -2,15 +2,43 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title></title>
+  <title>滑动拼图验证码</title>
+  <link rel="stylesheet" href="jigsaw.css">
+  <style>
+    .container {
+      width: 310px;
+      margin: 100px auto;
+    }
+    input {
+      display: block;
+      width: 290px;
+      line-height: 40px;
+      margin: 10px 0;
+      padding: 0 10px;
+      outline: none;
+      border:1px solid #c8cccf;
+      border-radius: 4px;
+      color:#6a6f77;
+    }
+    #msg {
+      width: 100%;
+      line-height: 40px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-<div id="container" style="position: relative">
-
+<div class="container">
+  <input value="admin" readonly/>
+  <input type="password" value="1234567890" readonly/>
+  <div id="captcha" style="position: relative"></div>
+  <div id="msg"></div>
 </div>
 <script src="jigsaw.js"></script>
 <script>
-  jigsaw.init(document.getElementById('container'))
+  jigsaw.init(document.getElementById('captcha'), function () {
+    document.getElementById('msg').innerHTML = '登录成功！'
+  })
 </script>
 </body>
 </html>
