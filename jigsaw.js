@@ -128,7 +128,6 @@
         canvasCtx: canvas.getContext('2d'),
         blockCtx: block.getContext('2d')
       })
-
     }
 
     initImg() {
@@ -206,8 +205,6 @@
         }
       })
     }
-
-
 
     verify() {
       const arr = this.trail // 拖动时y轴的移动距离
