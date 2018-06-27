@@ -36,9 +36,17 @@
 </div>
 <script src="jigsaw.js"></script>
 <script>
-  jigsaw.init(document.getElementById('captcha'), function () {
-    document.getElementById('msg').innerHTML = '登录成功！'
+  jigsaw.init({
+    el: document.getElementById('captcha'),
+    onSuccess: function() {
+      document.getElementById('msg').innerHTML = '登录成功！'
+    },
+    onFail: cleanMsg,
+    onRefresh: cleanMsg
   })
+  function cleanMsg() {
+    document.getElementById('msg').innerHTML = ''
+  }
 </script>
 </body>
 </html>

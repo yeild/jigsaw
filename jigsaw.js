@@ -74,10 +74,11 @@
   }
 
   class jigsaw {
-    constructor(el, success, fail) {
+    constructor({el, onSuccess, onFail, onRefresh}) {
       this.el = el
-      this.success = success
-      this.fail = fail
+      this.onSuccess = onSuccess
+      this.onFail = onFail
+      this.onRefresh = onRefresh
     }
 
     init() {
@@ -128,7 +129,6 @@
         canvasCtx: canvas.getContext('2d'),
         blockCtx: block.getContext('2d')
       })
-
     }
 
     initImg() {
@@ -161,6 +161,7 @@
       this.el.onselectstart = () => false
       this.refreshIcon.onclick = () => {
         this.reset()
+        typeof this.onRefresh === 'function' && this.onRefresh()
       }
 
       let originX, originY, trail = [], isMouseDown = false
@@ -191,7 +192,7 @@
         if (spliced) {
           if (TuringTest) {
             addClass(this.sliderContainer, 'sliderContainer_success')
-            this.success && this.success()
+            typeof this.onSuccess === 'function' && this.onSuccess()
           } else {
             addClass(this.sliderContainer, 'sliderContainer_fail')
             this.text.innerHTML = '再试一次'
@@ -199,15 +200,13 @@
           }
         } else {
           addClass(this.sliderContainer, 'sliderContainer_fail')
-          this.fail && this.fail()
+          typeof this.onFail === 'function' && this.onFail()
           setTimeout(() => {
             this.reset()
           }, 1000)
         }
       })
     }
-
-
 
     verify() {
       const arr = this.trail // 拖动时y轴的移动距离
@@ -234,8 +233,8 @@
   }
 
   window.jigsaw = {
-    init: function (element, success, fail) {
-      new jigsaw(element, success, fail).init()
+    init: function (opts) {
+      return new jigsaw(opts).init()
     }
   }
 }(window))
