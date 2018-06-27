@@ -8,12 +8,17 @@ canvas滑动验证码
 
 2. 
 ```
-jigsaw.init(element[, success][, fail])
+jigsaw.init({
+  el: document.getElementById('container'),
+  onSuccess: function () { ... },
+  onFail: function () { ... },
+  onRefresh: function () { ... }
+})
 ```
 
-jigsaw.init接收三个参数，第一个参数为页面容器元素， 第二和第三个参数分别为验证成功和失败的回调函数。
+jigsaw.init接收一个配置对象，el属性为页面容器元素， 后面三个属性分别为验证成功、验证失败和点击刷新按钮后的回调函数。
 
-### 特性：
+### Tips：
 
 1. 图片由 https://picsum.photos/ 随机产生，然后使用canvas裁剪生成。
 
