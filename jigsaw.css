@@ -58,7 +58,7 @@
 }
 
 .sliderContainer_fail .sliderIcon {
-  background-position: 0 -84px !important;
+  background-position: 0 -82px !important;
 }
 .sliderContainer_active .sliderText, .sliderContainer_success .sliderText, .sliderContainer_fail .sliderText {
   display: none;
@@ -98,7 +98,7 @@
   top: 15px;
   left: 13px;
   width: 14px;
-  height: 10px;
+  height: 12px;
   background: url(http://cstaticdun.126.net//2.6.3/images/icon_light.f13cff3.png) 0 -26px;
   background-size: 34px 471px;
 }
