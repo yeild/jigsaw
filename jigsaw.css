@@ -58,6 +58,7 @@
 }
 
 .sliderContainer_fail .sliderIcon {
+  top: 14px;
   background-position: 0 -82px !important;
 }
 .sliderContainer_active .sliderText, .sliderContainer_success .sliderText, .sliderContainer_fail .sliderText {
