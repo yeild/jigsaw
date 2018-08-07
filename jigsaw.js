@@ -1,10 +1,10 @@
 (function (window) {
   const l = 42, // 滑块边长
-    r = 10, // 滑块半径
+    r = 9, // 滑块半径
     w = 310, // canvas宽度
     h = 155, // canvas高度
     PI = Math.PI
-  const L = l + r * 2 // 滑块实际边长
+  const L = l + r * 2 + 3 // 滑块实际边长
 
   function getRandomNumberByRange(start, end) {
     return Math.round(Math.random() * (end - start) + start)
@@ -44,25 +44,21 @@
     return 'https://picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
   }
 
-  function draw(ctx, operation, x, y) {
+  function draw(ctx, x, y, operation) {
     ctx.beginPath()
     ctx.moveTo(x, y)
-    ctx.lineTo(x + l / 2, y)
-    ctx.arc(x + l / 2, y - r + 2, r, 0, 2 * PI)
-    ctx.lineTo(x + l / 2, y)
+    ctx.arc(x + l / 2, y - r + 2, r, 0.72*PI, 2.26 * PI)
     ctx.lineTo(x + l, y)
-    ctx.lineTo(x + l, y + l / 2)
-    ctx.arc(x + l + r - 2, y + l / 2, r, 0, 2 * PI)
-    ctx.lineTo(x + l, y + l / 2)
+    ctx.arc(x + l + r - 2, y + l / 2, r, 1.21*PI, 2.78 * PI)
     ctx.lineTo(x + l, y + l)
     ctx.lineTo(x, y + l)
+    ctx.arc(x + r - 2, y + l / 2, r + 0.4, 2.76 * PI, 1.24 * PI, true)
     ctx.lineTo(x, y)
-    ctx.fillStyle = '#fff'
+    ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
+    ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
+    ctx.stroke()
     ctx[operation]()
-    ctx.beginPath()
-    ctx.arc(x, y + l / 2, r, 1.5 * PI, 0.5 * PI)
-    ctx.globalCompositeOperation = "xor"
-    ctx.fill()
+    ctx.globalCompositeOperation = 'overlay'
   }
 
   function sum(x, y) {
@@ -84,7 +80,6 @@
     init() {
       this.initDOM()
       this.initImg()
-      this.draw()
       this.bindEvents()
     }
 
@@ -133,10 +128,11 @@
 
     initImg() {
       const img = createImg(() => {
+        this.draw()
         this.canvasCtx.drawImage(img, 0, 0, w, h)
         this.blockCtx.drawImage(img, 0, 0, w, h)
-        const y = this.y - r * 2 + 2
-        const ImageData = this.blockCtx.getImageData(this.x, y, L, L)
+        const y = this.y - r * 2 - 1
+        const ImageData = this.blockCtx.getImageData(this.x - 3, y, L, L)
         this.block.width = L
         this.blockCtx.putImageData(ImageData, 0, y)
       })
@@ -147,8 +143,8 @@
       // 随机创建滑块的位置
       this.x = getRandomNumberByRange(L + 10, w - (L + 10))
       this.y = getRandomNumberByRange(10 + r * 2, h - (L + 10))
-      draw(this.canvasCtx, 'fill', this.x, this.y)
-      draw(this.blockCtx, 'clip', this.x, this.y)
+      draw(this.canvasCtx, this.x, this.y, 'fill')
+      draw(this.blockCtx, this.x, this.y, 'clip')
     }
 
     clean() {
@@ -227,7 +223,6 @@
       this.sliderMask.style.width = 0
       this.clean()
       this.img.src = getRandomImg()
-      this.draw()
     }
 
   }
