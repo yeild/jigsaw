@@ -72,6 +72,7 @@
 
   class jigsaw {
     constructor({el, onSuccess, onFail, onRefresh}) {
+      el.style.position = el.style.position || 'relative'
       this.el = el
       this.onSuccess = onSuccess
       this.onFail = onFail
@@ -185,9 +186,9 @@
         if (e.x == originX) return false
         removeClass(this.sliderContainer, 'sliderContainer_active')
         this.trail = trail
-        const {spliced, TuringTest} = this.verify()
+        const {spliced, verified} = this.verify()
         if (spliced) {
-          if (TuringTest) {
+          if (verified) {
             addClass(this.sliderContainer, 'sliderContainer_success')
             typeof this.onSuccess === 'function' && this.onSuccess()
           } else {
@@ -207,13 +208,13 @@
 
     verify() {
       const arr = this.trail // 拖动时y轴的移动距离
-      const average = arr.reduce(sum) / arr.length // 平均值
-      const deviations = arr.map(x => x - average) // 偏差数组
-      const stddev = Math.sqrt(deviations.map(square).reduce(sum) / arr.length) // 标准差
+      const average = arr.reduce(sum) / arr.length
+      const deviations = arr.map(x => x - average)
+      const stddev = Math.sqrt(deviations.map(square).reduce(sum) / arr.length)
       const left = parseInt(this.block.style.left)
       return {
         spliced: Math.abs(left - this.x) < 10,
-        TuringTest: average !== stddev, // 只是简单的验证拖动轨迹，相等时一般为0，表示可能非人为操作
+        verified: stddev !== 0 , // 简单验证下拖动轨迹，为零时表示Y轴上下没有波动，可能非人为操作
       }
     }
 
