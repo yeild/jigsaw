@@ -28,8 +28,10 @@
     return img
   }
   
-  function createElement(tagName) {
-    return document.createElement(tagName)
+  function createElement(tagName, className) {
+    const elment = document.createElement(tagName)
+    elment.className = className
+    return elment
   }
 
   function addClass(tag, className) {
@@ -88,21 +90,15 @@
     initDOM() {
       const canvas = createCanvas(w, h) // 画布
       const block = canvas.cloneNode(true) // 滑块
-      const sliderContainer = createElement('div')
-      const refreshIcon = createElement('div')
-      const sliderMask = createElement('div')
-      const slider = createElement('div')
-      const sliderIcon = createElement('span')
-      const text = createElement('span')
+      const sliderContainer = createElement('div', 'sliderContainer')
+      const refreshIcon = createElement('div', 'refreshIcon')
+      const sliderMask = createElement('div', 'sliderMask')
+      const slider = createElement('div', 'slider')
+      const sliderIcon = createElement('span', 'sliderIcon')
+      const text = createElement('span', 'sliderText')
 
       block.className = 'block'
-      sliderContainer.className = 'sliderContainer'
-      refreshIcon.className = 'refreshIcon'
-      sliderMask.className = 'sliderMask'
-      slider.className = 'slider'
-      sliderIcon.className = 'sliderIcon'
       text.innerHTML = '向右滑动滑块填充拼图'
-      text.className = 'sliderText'
 
       const el = this.el
       el.appendChild(canvas)
@@ -173,7 +169,7 @@
         const moveY = e.y - originY
         if (moveX < 0 || moveX + 38 >= w) return false
         this.slider.style.left = moveX + 'px'
-        var blockLeft = (w - 40 - 20) / (w - 40) * moveX
+        const blockLeft = (w - 40 - 20) / (w - 40) * moveX
         this.block.style.left = blockLeft + 'px'
 
         addClass(this.sliderContainer, 'sliderContainer_active')
