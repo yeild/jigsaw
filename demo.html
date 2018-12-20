@@ -3,7 +3,6 @@
 <head>
   <meta charset="UTF-8">
   <title>滑动拼图验证码</title>
-  <link rel="stylesheet" href="jigsaw.css">
   <style>
     .container {
       width: 310px;
@@ -41,7 +40,11 @@
   <div id="captcha"></div>
   <div id="msg"></div>
 </div>
-<script src="jigsaw.js"></script>
+<script>
+if (!window.vTree) {
+  document.write('<script src="./dist/jigsaw.min.js"><\/script>')
+}
+</script>
 <script>
   jigsaw.init({
     el: document.getElementById('captcha'),

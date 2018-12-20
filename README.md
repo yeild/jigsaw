@@ -6,7 +6,7 @@ canvas滑动验证码
 ### 用法：
 1. 引入jigsaw.js 和 jigsaw.css
 
-2. 
+2.
 ```
 jigsaw.init({
   el: document.getElementById('container'),
