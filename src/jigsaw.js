@@ -18,13 +18,31 @@ function createCanvas (width, height) {
 }
 
 function createImg (onload) {
-  const img = createElement('img')
+  const img = new Image()
   img.crossOrigin = "Anonymous"
   img.onload = onload
   img.onerror = () => {
-    img.src = getRandomImg()
+   img.setSrc(getRandomImgSrc())
   }
-  img.src = getRandomImg()
+  
+  img.setSrc = function (src) {
+    if (isIE) { // IE浏览器无法通过img.crossOrigin跨域，使用ajax获取图片blob然后转为dataURL显示
+      const xhr = new XMLHttpRequest()
+      xhr.onloadend = function (e) {
+        const file = new FileReader() // FileReader仅支持IE10+
+        file.readAsDataURL(e.target.response)
+        file.onloadend = function (e) {
+          img.src = e.target.result
+        }
+      }
+      xhr.open('GET', src)
+      xhr.responseType = 'blob'
+      xhr.send()
+    }
+    else img.src = src
+  }
+
+  img.setSrc(getRandomImgSrc())
   return img
 }
 
@@ -42,8 +60,8 @@ function removeClass (tag, className) {
   tag.classList.remove(className)
 }
 
-function getRandomImg () {
-  return 'https://picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
+function getRandomImgSrc () {
+  return '//picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
 }
 
 function draw (ctx, x, y, operation) {
@@ -235,7 +253,7 @@ class jigsaw {
     this.block.style.left = 0
     this.sliderMask.style.width = 0
     this.clean()
-    this.img.src = getRandomImg()
+    this.img.setSrc(getRandomImgSrc())
   }
 }
 
