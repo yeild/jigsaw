@@ -5,24 +5,20 @@
     "dev": "webpack-dev-server --config config/webpack.dev.js",
     "build": "node build"
   },
-  "dependencies": {
+  "devDependencies": {
+    "babel-core": "^6.26.3",
     "babel-loader": "^7.1.4",
+    "babel-plugin-transform-object-assign": "^6.22.0",
+    "babel-preset-env": "^1.7.0",
     "clean-webpack-plugin": "^0.1.19",
     "css-loader": "^0.28.11",
     "friendly-errors-webpack-plugin": "^1.6.1",
     "html-webpack-plugin": "^3.1.0",
-    "node-sass": "^4.8.3",
-    "sass-loader": "^6.0.7",
+    "ora": "^3.0.0",
     "style-loader": "^0.20.3",
     "webpack": "^4.3.0",
-    "webpack-cli": "^2.0.13",
+    "webpack-cli": "^3.2.1",
     "webpack-dev-server": "^3.1.1",
     "webpack-merge": "^4.1.2"
-  },
-  "devDependencies": {
-    "babel-plugin-transform-object-assign": "^6.22.0",
-    "babel-preset-env": "^1.7.0",
-    "ora": "^3.0.0",
-    "webpack-cli": "^3.1.1"
   }
 }
