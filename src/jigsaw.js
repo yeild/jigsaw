@@ -11,7 +11,7 @@ function getRandomNumberByRange (start, end) {
 }
 
 function createCanvas (width, height) {
-  const canvas = createElement('canvas')
+  const canvas = document.createElement('canvas')
   canvas.width = width
   canvas.height = height
   return canvas
@@ -94,7 +94,13 @@ import  './jigsaw.css'
 
 class jigsaw {
   constructor ({ el, onSuccess, onFail, onRefresh }) {
-    el.style.position = el.style.position || 'relative'
+    el.style.position = 'relative'
+    el.style.width = w + 'px'
+    Object.assign(el.style, {
+      position: 'relative',
+      width: w + 'px',
+      margin: '0 auto'
+    })
     this.el = el
     this.onSuccess = onSuccess
     this.onFail = onFail
