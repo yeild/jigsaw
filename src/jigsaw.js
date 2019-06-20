@@ -79,7 +79,6 @@ function draw (ctx, x, y, operation) {
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.stroke()
   ctx[operation]()
-  // ctx.globalCompositeOperation = isIE ? 'xor' : 'destination-over'
   ctx.globalCompositeOperation = 'destination-over'
 }
 
