@@ -5,6 +5,7 @@ const l = 42, // 滑块边长
   PI = Math.PI
 const L = l + r * 2 + 3 // 滑块实际边长
 const isIE = window.navigator.userAgent.indexOf('Trident') > -1
+const isFF = window.navigator.userAgent.indexOf('Firefox') > -1
 
 function getRandomNumberByRange (start, end) {
   return Math.round(Math.random() * (end - start) + start)
@@ -79,7 +80,7 @@ function draw (ctx, x, y, operation) {
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.stroke()
   ctx[operation]()
-  ctx.globalCompositeOperation = isIE ? 'xor' : 'overlay'
+  ctx.globalCompositeOperation = isIE || isFF ? 'xor' : 'overlay'
 }
 
 function sum (x, y) {
