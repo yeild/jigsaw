@@ -235,6 +235,8 @@ class jigsaw {
     }
     this.slider.addEventListener('mousedown', handleDragStart)
     this.slider.addEventListener('touchstart', handleDragStart)
+    this.block.addEventListener('mousedown', handleDragStart)
+    this.block.addEventListener('touchstart', handleDragStart)
     document.addEventListener('mousemove', handleDragMove)
     document.addEventListener('touchmove', handleDragMove)
     document.addEventListener('mouseup', handleDragEnd)
