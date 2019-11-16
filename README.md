@@ -10,6 +10,8 @@ canvas滑动验证码
 ```
 jigsaw.init({
   el: document.getElementById('container'),
+  width: 310, // 可选, 默认310
+  height: 155, // 可选, 默认155
   onSuccess: function () { ... },
   onFail: function () { ... },
   onRefresh: function () { ... }

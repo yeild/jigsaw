@@ -1,8 +1,10 @@
-const l = 42, // 滑块边长
-  r = 9, // 滑块半径
-  w = 310, // canvas宽度
-  h = 155, // canvas高度
-  PI = Math.PI
+import  './jigsaw.css'
+
+let w = 310 // canvas宽度
+let h = 155 // canvas高度
+const l = 42 // 滑块边长
+const r = 9 // 滑块半径
+const PI = Math.PI
 const L = l + r * 2 + 3 // 滑块实际边长
 const isIE = window.navigator.userAgent.indexOf('Trident') > -1
 
@@ -61,7 +63,7 @@ function removeClass (tag, className) {
 }
 
 function getRandomImgSrc () {
-  return '//picsum.photos/300/150/?image=' + getRandomNumberByRange(0, 1084)
+  return `https://picsum.photos/${w}/${h}/?image=${getRandomNumberByRange(0, 1084)}`
 }
 
 function draw (ctx, x, y, operation) {
@@ -90,10 +92,10 @@ function square (x) {
   return x * x
 }
 
-import  './jigsaw.css'
-
 class jigsaw {
-  constructor ({ el, onSuccess, onFail, onRefresh }) {
+  constructor ({ el, width = 310, height = 155, onSuccess, onFail, onRefresh }) {
+    w = width
+    h = height
     el.style.position = 'relative'
     el.style.width = w + 'px'
     Object.assign(el.style, {
@@ -117,6 +119,7 @@ class jigsaw {
     const canvas = createCanvas(w, h) // 画布
     const block = canvas.cloneNode(true) // 滑块
     const sliderContainer = createElement('div', 'sliderContainer')
+    sliderContainer.style.width = w + 'px'
     const refreshIcon = createElement('div', 'refreshIcon')
     const sliderMask = createElement('div', 'sliderMask')
     const slider = createElement('div', 'slider')
@@ -212,7 +215,7 @@ class jigsaw {
       if (!isMouseDown) return false
       isMouseDown = false
       const eventX = e.clientX || e.changedTouches[0].clientX
-      if (eventX == originX) return false
+      if (eventX === originX) return false
       removeClass(this.sliderContainer, 'sliderContainer_active')
       this.trail = trail
       const { spliced, verified } = this.verify()
@@ -222,7 +225,7 @@ class jigsaw {
           typeof this.onSuccess === 'function' && this.onSuccess()
         } else {
           addClass(this.sliderContainer, 'sliderContainer_fail')
-          this.text.innerHTML = '再试一次'
+          this.text.innerHTML = '请再试一次'
           this.reset()
         }
       } else {
@@ -249,7 +252,7 @@ class jigsaw {
     const left = parseInt(this.block.style.left)
     return {
       spliced: Math.abs(left - this.x) < 10,
-      verified: stddev !== 0, // 简单验证下拖动轨迹，为零时表示Y轴上下没有波动，可能非人为操作
+      verified: stddev !== 0, // 简单验证拖动轨迹，为零时表示Y轴上下没有波动，可能非人为操作
     }
   }
 
