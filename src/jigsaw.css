@@ -2,6 +2,12 @@
   position: absolute;
   left: 0;
   top: 0;
+  cursor: pointer;
+  cursor: grab;
+}
+
+.block:active {
+  cursor: grabbing;
 }
 
 .sliderContainer {
@@ -82,8 +88,13 @@
   height: 40px;
   background: #fff;
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
-  cursor: pointer;
   transition: background .2s linear;
+  cursor: pointer;
+  cursor: grab;
+}
+
+.slider:active {
+  cursor: grabbing;
 }
 
 .slider:hover {

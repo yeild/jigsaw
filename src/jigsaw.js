@@ -6,7 +6,6 @@ const l = 42 // 滑块边长
 const r = 9 // 滑块半径
 const PI = Math.PI
 const L = l + r * 2 + 3 // 滑块实际边长
-const isIE = window.navigator.userAgent.indexOf('Trident') > -1
 
 function getRandomNumberByRange (start, end) {
   return Math.round(Math.random() * (end - start) + start)
@@ -28,6 +27,7 @@ function createImg (onload) {
   }
   
   img.setSrc = function (src) {
+    const isIE = window.navigator.userAgent.indexOf('Trident') > -1
     if (isIE) { // IE浏览器无法通过img.crossOrigin跨域，使用ajax获取图片blob然后转为dataURL显示
       const xhr = new XMLHttpRequest()
       xhr.onloadend = function (e) {
@@ -81,7 +81,7 @@ function draw (ctx, x, y, operation) {
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.stroke()
   ctx[operation]()
-  ctx.globalCompositeOperation = isIE ? 'xor' : 'overlay'
+  ctx.globalCompositeOperation = 'destination-over'
 }
 
 function sum (x, y) {
@@ -238,6 +238,8 @@ class jigsaw {
     }
     this.slider.addEventListener('mousedown', handleDragStart)
     this.slider.addEventListener('touchstart', handleDragStart)
+    this.block.addEventListener('mousedown', handleDragStart)
+    this.block.addEventListener('touchstart', handleDragStart)
     document.addEventListener('mousemove', handleDragMove)
     document.addEventListener('touchmove', handleDragMove)
     document.addEventListener('mouseup', handleDragEnd)
