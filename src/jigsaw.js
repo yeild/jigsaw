@@ -1,7 +1,7 @@
 import  './jigsaw.css'
 
-let w = 310 // canvas宽度
-let h = 155 // canvas高度
+const w = 310 // canvas宽度
+const h = 155 // canvas高度
 const l = 42 // 滑块边长
 const r = 9 // 滑块半径
 const PI = Math.PI
@@ -20,10 +20,10 @@ function createCanvas (width, height) {
 
 function createImg (onload) {
   const img = new Image()
-  img.crossOrigin = "Anonymous"
+  img.crossOrigin = 'Anonymous'
   img.onload = onload
   img.onerror = () => {
-   img.setSrc(getRandomImgSrc())
+   img.setSrc(getRandomImgSrc()) // 图片加载失败的时候重新加载其他图片
   }
   
   img.setSrc = function (src) {
@@ -49,9 +49,9 @@ function createImg (onload) {
 }
 
 function createElement (tagName, className) {
-  const elment = document.createElement(tagName)
-  elment.className = className
-  return elment
+  const element = document.createElement(tagName)
+  element.className = className
+  return element
 }
 
 function addClass (tag, className) {
@@ -63,10 +63,10 @@ function removeClass (tag, className) {
 }
 
 function getRandomImgSrc () {
-  return `https://picsum.photos/${w}/${h}/?image=${getRandomNumberByRange(0, 1084)}`
+  return `https://i.picsum.photos/id/${getRandomNumberByRange(0, 1084)}/${w}/${h}.jpg`
 }
 
-function draw (ctx, x, y, operation) {
+function drawPath (ctx, x, y, operation) {
   ctx.beginPath()
   ctx.moveTo(x, y)
   ctx.arc(x + l / 2, y - r + 2, r, 0.72 * PI, 2.26 * PI)
@@ -80,8 +80,8 @@ function draw (ctx, x, y, operation) {
   ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.strokeStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.stroke()
-  ctx[operation]()
   ctx.globalCompositeOperation = 'destination-over'
+  operation === 'fill'? ctx.fill() : ctx.clip()
 }
 
 function sum (x, y) {
@@ -92,17 +92,15 @@ function square (x) {
   return x * x
 }
 
-class jigsaw {
-  constructor ({ el, width = 310, height = 155, onSuccess, onFail, onRefresh }) {
-    w = width
-    h = height
-    el.style.position = 'relative'
-    el.style.width = w + 'px'
+class Jigsaw {
+  constructor ({ el, width = w, height = h, onSuccess, onFail, onRefresh }) {
     Object.assign(el.style, {
       position: 'relative',
-      width: w + 'px',
+      width: width + 'px',
       margin: '0 auto'
     })
+    this.width = width
+    this.height = height
     this.el = el
     this.onSuccess = onSuccess
     this.onFail = onFail
@@ -116,10 +114,11 @@ class jigsaw {
   }
 
   initDOM () {
-    const canvas = createCanvas(w, h) // 画布
-    const block = canvas.cloneNode(true) // 滑块
+    const { width, height } = this
+    const canvas = createCanvas(width, height) // 画布
+    const block = createCanvas(width, height) // 滑块
     const sliderContainer = createElement('div', 'sliderContainer')
-    sliderContainer.style.width = w + 'px'
+    sliderContainer.style.width = width + 'px'
     const refreshIcon = createElement('div', 'refreshIcon')
     const sliderMask = createElement('div', 'sliderMask')
     const slider = createElement('div', 'slider')
@@ -155,29 +154,28 @@ class jigsaw {
 
   initImg () {
     const img = createImg(() => {
-      this.draw()
-      this.canvasCtx.drawImage(img, 0, 0, w, h)
-      this.blockCtx.drawImage(img, 0, 0, w, h)
-      const y = this.y - r * 2 - 1
-      const ImageData = this.blockCtx.getImageData(this.x - 3, y, L, L)
-      this.block.width = L
-      this.blockCtx.putImageData(ImageData, 0, y)
+      this.draw(img)
     })
     this.img = img
   }
 
-  draw () {
-    // 随机创建滑块的位置
-    this.x = getRandomNumberByRange(L + 10, w - (L + 10))
-    this.y = getRandomNumberByRange(10 + r * 2, h - (L + 10))
-    draw(this.canvasCtx, this.x, this.y, 'fill')
-    draw(this.blockCtx, this.x, this.y, 'clip')
-  }
-
-  clean () {
-    this.canvasCtx.clearRect(0, 0, w, h)
-    this.blockCtx.clearRect(0, 0, w, h)
-    this.block.width = w
+  draw (img) {
+    const { width, height } = this
+    // 随机位置创建拼图形状
+    this.x = getRandomNumberByRange(L + 10, width - (L + 10))
+    this.y = getRandomNumberByRange(10 + r * 2, height - (L + 10))
+    drawPath(this.canvasCtx, this.x, this.y, 'fill')
+    drawPath(this.blockCtx, this.x, this.y, 'clip')
+    
+    // 画入图片
+    this.canvasCtx.drawImage(img, 0, 0, width, height)
+    this.blockCtx.drawImage(img, 0, 0, width, height)
+    
+    // 提取滑块并放到最左边
+    const y = this.y - r * 2 - 1
+    const ImageData = this.blockCtx.getImageData(this.x - 3, y, L, L)
+    this.block.width = L
+    this.blockCtx.putImageData(ImageData, 0, y)
   }
 
   bindEvents () {
@@ -194,16 +192,16 @@ class jigsaw {
       originY = e.clientY || e.touches[0].clientY
       isMouseDown = true
     }
-
+    const width = this.width
     const handleDragMove = (e) => {
       if (!isMouseDown) return false
       const eventX = e.clientX || e.touches[0].clientX
       const eventY = e.clientY || e.touches[0].clientY
       const moveX = eventX - originX
       const moveY = eventY - originY
-      if (moveX < 0 || moveX + 38 >= w) return false
+      if (moveX < 0 || moveX + 38 >= width) return false
       this.slider.style.left = moveX + 'px'
-      const blockLeft = (w - 40 - 20) / (w - 40) * moveX
+      const blockLeft = (width - 40 - 20) / (width - 40) * moveX
       this.block.style.left = blockLeft + 'px'
 
       addClass(this.sliderContainer, 'sliderContainer_active')
@@ -231,9 +229,7 @@ class jigsaw {
       } else {
         addClass(this.sliderContainer, 'sliderContainer_fail')
         typeof this.onFail === 'function' && this.onFail()
-        setTimeout(() => {
-          this.reset()
-        }, 1000)
+        setTimeout(this.reset.bind(this), 1000)
       }
     }
     this.slider.addEventListener('mousedown', handleDragStart)
@@ -259,17 +255,25 @@ class jigsaw {
   }
 
   reset () {
+    const { width, height } = this
+    // 重置样式
     this.sliderContainer.className = 'sliderContainer'
-    this.slider.style.left = 0
-    this.block.style.left = 0
-    this.sliderMask.style.width = 0
-    this.clean()
+    this.slider.style.left = 0 + 'px'
+    this.block.width = width
+    this.block.style.left = 0 + 'px'
+    this.sliderMask.style.width = 0 + 'px'
+    
+    // 清空画布
+    this.canvasCtx.clearRect(0, 0, width, height)
+    this.blockCtx.clearRect(0, 0, width, height)
+    
+    // 重新加载图片
     this.img.setSrc(getRandomImgSrc())
   }
 }
 
 window.jigsaw = {
   init: function (opts) {
-    return new jigsaw(opts).init()
+    return new Jigsaw(opts).init()
   }
 }
