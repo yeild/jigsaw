@@ -28,6 +28,7 @@ function createImg (onload) {
   
   img.setSrc = function (src) {
     const isIE = window.navigator.userAgent.indexOf('Trident') > -1
+    console.log(isIE)
     if (isIE) { // IE浏览器无法通过img.crossOrigin跨域，使用ajax获取图片blob然后转为dataURL显示
       const xhr = new XMLHttpRequest()
       xhr.onloadend = function (e) {
@@ -50,7 +51,7 @@ function createImg (onload) {
 
 function createElement (tagName, className) {
   const element = document.createElement(tagName)
-  element.className = className
+  className && (element.className = className)
   return element
 }
 
@@ -117,6 +118,7 @@ class Jigsaw {
     const { width, height } = this
     const canvas = createCanvas(width, height) // 画布
     const block = createCanvas(width, height) // 滑块
+    block.className = 'block'
     const sliderContainer = createElement('div', 'sliderContainer')
     sliderContainer.style.width = width + 'px'
     const refreshIcon = createElement('div', 'refreshIcon')
@@ -124,11 +126,20 @@ class Jigsaw {
     const slider = createElement('div', 'slider')
     const sliderIcon = createElement('span', 'sliderIcon')
     const text = createElement('span', 'sliderText')
-
-    block.className = 'block'
     text.innerHTML = '向右滑动填充拼图'
+    
+    // 增加loading
+    const loadingContainer = createElement('div', 'loadingContainer')
+    loadingContainer.style.width = width + 'px'
+    loadingContainer.style.height = height + 'px'
+    const loadingIcon = createElement('div', 'loadingIcon')
+    const loadingText = createElement('span')
+    loadingText.innerHTML = '加载中...'
+    loadingContainer.appendChild(loadingIcon)
+    loadingContainer.appendChild(loadingText)
 
     const el = this.el
+    el.appendChild(loadingContainer)
     el.appendChild(canvas)
     el.appendChild(refreshIcon)
     el.appendChild(block)
@@ -142,6 +153,7 @@ class Jigsaw {
       canvas,
       block,
       sliderContainer,
+      loadingContainer,
       refreshIcon,
       slider,
       sliderMask,
@@ -152,8 +164,13 @@ class Jigsaw {
     })
   }
 
+  setLoading (isLoading) {
+    this.loadingContainer.style.display = isLoading ? '' : 'none'
+  }
+  
   initImg () {
     const img = createImg(() => {
+      this.setLoading(false)
       this.draw(img)
     })
     this.img = img
@@ -268,6 +285,7 @@ class Jigsaw {
     this.blockCtx.clearRect(0, 0, width, height)
     
     // 重新加载图片
+    this.setLoading(true)
     this.img.setSrc(getRandomImgSrc())
   }
 }

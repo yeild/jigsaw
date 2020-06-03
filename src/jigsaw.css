@@ -47,7 +47,7 @@
 }
 
 .sliderContainer_success .sliderIcon {
-  background-position: 0 0 !important;
+  background-position: 0 -26px!important;
 }
 
 .sliderContainer_fail .slider {
@@ -67,6 +67,7 @@
   top: 14px;
   background-position: 0 -82px !important;
 }
+
 .sliderContainer_active .sliderText, .sliderContainer_success .sliderText, .sliderContainer_fail .sliderText {
   display: none;
 }
@@ -101,27 +102,61 @@
   background: #1991FA;
 }
 
-.slider:hover .sliderIcon {
-  background-position: 0 -13px;
-}
-
 .sliderIcon {
   position: absolute;
   top: 15px;
   left: 13px;
   width: 14px;
   height: 12px;
-  background: url(http://cstaticdun.126.net//2.6.3/images/icon_light.f13cff3.png) 0 -26px;
-  background-size: 34px 471px;
+  background: url(https://cstaticdun.126.net//2.13.6/images/icon_light.4353d81.png) 0 -13px;
+  background-size: 32px 544px;
+}
+
+.slider:hover .sliderIcon {
+  background-position: 0 0;
 }
 
 .refreshIcon {
   position: absolute;
-  right: 0;
-  top: 0;
-  width: 34px;
-  height: 34px;
+  right: 5px;
+  top: 5px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
-  background: url(http://cstaticdun.126.net//2.6.3/images/icon_light.f13cff3.png) 0 -437px;
-  background-size: 34px 471px;
+  background: url(https://cstaticdun.126.net//2.13.6/images/icon_light.4353d81.png) 0 -233px;
+  background-size: 32px 544px;
+}
+
+.refreshIcon:hover {
+  background-position: 0 -266px;
+}
+
+.loadingContainer {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 310px;
+  height: 155px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  font-size: 14px;
+  color: #45494c;
+  z-index: 2;
+  background: #EDF0F2;
+}
+
+.loadingIcon {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 10px;
+  background: url(https://cstaticdun.126.net//2.13.6/images/icon_light.4353d81.png) 0 -332px;
+  background-size: 32px 544px;
+  animation: loading-icon-rotate 0.8s linear infinite;
+}
+
+@keyframes loading-icon-rotate {
+  from { transform: rotate(0) }
+  to { transform: rotate(360deg)}
 }
