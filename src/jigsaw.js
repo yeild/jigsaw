@@ -1,4 +1,4 @@
-import  './jigsaw.css'
+import styles from './jigsaw.css'
 
 const w = 310 // canvas宽度
 const h = 155 // canvas高度
@@ -51,16 +51,20 @@ function createImg (onload) {
 
 function createElement (tagName, className) {
   const element = document.createElement(tagName)
-  className && (element.className = className)
+  className && (element.className = styles[className])
   return element
 }
 
-function addClass (tag, className) {
-  tag.classList.add(className)
+function setClass (element, className) {
+  element.className = styles[className]
 }
 
-function removeClass (tag, className) {
-  tag.classList.remove(className)
+function addClass (element, className) {
+  element.classList.add(styles[className])
+}
+
+function removeClass (element, className) {
+  element.classList.remove(styles[className])
 }
 
 function getRandomImgSrc () {
@@ -118,7 +122,7 @@ class Jigsaw {
     const { width, height } = this
     const canvas = createCanvas(width, height) // 画布
     const block = createCanvas(width, height) // 滑块
-    block.className = 'block'
+    setClass(block, 'block')
     const sliderContainer = createElement('div', 'sliderContainer')
     sliderContainer.style.width = width + 'px'
     const refreshIcon = createElement('div', 'refreshIcon')
@@ -274,7 +278,7 @@ class Jigsaw {
   reset () {
     const { width, height } = this
     // 重置样式
-    this.sliderContainer.className = 'sliderContainer'
+    setClass(this.sliderContainer, 'sliderContainer')
     this.slider.style.left = 0 + 'px'
     this.block.width = width
     this.block.style.left = 0 + 'px'
