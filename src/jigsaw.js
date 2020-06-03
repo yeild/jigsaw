@@ -28,7 +28,6 @@ function createImg (onload) {
   
   img.setSrc = function (src) {
     const isIE = window.navigator.userAgent.indexOf('Trident') > -1
-    console.log(isIE)
     if (isIE) { // IE浏览器无法通过img.crossOrigin跨域，使用ajax获取图片blob然后转为dataURL显示
       const xhr = new XMLHttpRequest()
       xhr.onloadend = function (e) {
