@@ -124,6 +124,7 @@ class Jigsaw {
     setClass(block, 'block')
     const sliderContainer = createElement('div', 'sliderContainer')
     sliderContainer.style.width = width + 'px'
+    sliderContainer.style.pointerEvents = 'none'
     const refreshIcon = createElement('div', 'refreshIcon')
     const sliderMask = createElement('div', 'sliderMask')
     const slider = createElement('div', 'slider')
@@ -169,6 +170,7 @@ class Jigsaw {
 
   setLoading (isLoading) {
     this.loadingContainer.style.display = isLoading ? '' : 'none'
+    this.sliderContainer.style.pointerEvents = isLoading ? 'none' : ''
   }
   
   initImg () {
