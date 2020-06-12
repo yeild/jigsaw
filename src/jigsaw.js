@@ -67,7 +67,7 @@ function removeClass (element, className) {
 }
 
 function getRandomImgSrc () {
-  return `https://i.picsum.photos/id/${getRandomNumberByRange(0, 1084)}/${w}/${h}.jpg`
+  return `https://picsum.photos/id/${getRandomNumberByRange(0, 1084)}/${w}/${h}`
 }
 
 function drawPath (ctx, x, y, operation) {
