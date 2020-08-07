@@ -25,7 +25,7 @@ function createImg (onload) {
   img.onerror = () => {
    img.setSrc(getRandomImgSrc()) // 图片加载失败的时候重新加载其他图片
   }
-  
+
   img.setSrc = function (src) {
     const isIE = window.navigator.userAgent.indexOf('Trident') > -1
     if (isIE) { // IE浏览器无法通过img.crossOrigin跨域，使用ajax获取图片blob然后转为dataURL显示
@@ -131,7 +131,7 @@ class Jigsaw {
     const sliderIcon = createElement('span', 'sliderIcon')
     const text = createElement('span', 'sliderText')
     text.innerHTML = '向右滑动填充拼图'
-    
+
     // 增加loading
     const loadingContainer = createElement('div', 'loadingContainer')
     loadingContainer.style.width = width + 'px'
@@ -172,7 +172,7 @@ class Jigsaw {
     this.loadingContainer.style.display = isLoading ? '' : 'none'
     this.sliderContainer.style.pointerEvents = isLoading ? 'none' : ''
   }
-  
+
   initImg () {
     const img = createImg(() => {
       this.setLoading(false)
@@ -188,11 +188,11 @@ class Jigsaw {
     this.y = getRandomNumberByRange(10 + r * 2, height - (L + 10))
     drawPath(this.canvasCtx, this.x, this.y, 'fill')
     drawPath(this.blockCtx, this.x, this.y, 'clip')
-    
+
     // 画入图片
     this.canvasCtx.drawImage(img, 0, 0, width, height)
     this.blockCtx.drawImage(img, 0, 0, width, height)
-    
+
     // 提取滑块并放到最左边
     const y = this.y - r * 2 - 1
     const ImageData = this.blockCtx.getImageData(this.x - 3, y, L, L)
@@ -217,6 +217,7 @@ class Jigsaw {
     const width = this.width
     const handleDragMove = (e) => {
       if (!isMouseDown) return false
+      e.preventDefault()
       const eventX = e.clientX || e.touches[0].clientX
       const eventY = e.clientY || e.touches[0].clientY
       const moveX = eventX - originX
@@ -284,11 +285,11 @@ class Jigsaw {
     this.block.width = width
     this.block.style.left = 0 + 'px'
     this.sliderMask.style.width = 0 + 'px'
-    
+
     // 清空画布
     this.canvasCtx.clearRect(0, 0, width, height)
     this.blockCtx.clearRect(0, 0, width, height)
-    
+
     // 重新加载图片
     this.setLoading(true)
     this.img.setSrc(getRandomImgSrc())
